@@ -9,6 +9,9 @@
 // Window dimensions
 const GLuint WIDTH = 1920, HEIGHT = 1080;
 
+//functions
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+
 // The MAIN function, from here we start the application and run the game loop
 int main()
 {
@@ -45,11 +48,19 @@ int main()
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
-	// Game loop
+	// Assign the key callback to our window
+	glfwSetKeyCallback(window, key_callback);
+
+	// Program loop
 	while (!glfwWindowShouldClose(window))
 	{
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
+
+		// Do all the rendering
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
@@ -57,4 +68,13 @@ int main()
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 	return 0;
+}
+
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	// When escape key is pressed, set the WindowShouldClose property to true, closing the application
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
