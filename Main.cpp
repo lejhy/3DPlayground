@@ -63,31 +63,6 @@ int main() {
 	// Assign the key callback to our window
 	glfwSetKeyCallback(window, key_callback);
 
-	// Make some geometry to work with
-	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f,  0.5f, 0.0f
-	};
-
-	// Initialize variables
-	GLuint vertexArrayObject;
-	glGenVertexArrays(1, &vertexArrayObject);
-	GLuint vertexBufferObject;
-	glGenBuffers(1, &vertexBufferObject);
-
-
-	// Bind the Vertex Array Object
-	glBindVertexArray(vertexArrayObject);
-	// Copy vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// Set vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	// Unbind the Aertex Array Object
-	glBindVertexArray(0);
-
 	// Create variables for progress and error checking
 	GLint success;
 	GLchar infoLog[512];
@@ -128,16 +103,81 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	// Make some geometry to work with
+	// Triangle
+	GLfloat triangleVerts[] = {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f,  0.8f, 0.0f
+	};
+	// Initialize variables
+	GLuint triangleVAO, triangleVBO;
+	glGenVertexArrays(1, &triangleVAO);
+	glGenBuffers(1, &triangleVBO);
+	// Bind the Vertex Array Object
+	glBindVertexArray(triangleVAO);
+		// Copy vertices array in a buffer for OpenGL to use
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVerts), triangleVerts, GL_STATIC_DRAW);
+		// Set vertex attributes pointers
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+	// Unbind the Vertex Array Object
+	glBindVertexArray(0);
+
+	// Square
+	GLfloat squareVerts[] = {
+		0.5f,  0.5f, 0.0f,	// Top Right
+		0.5f, -0.5f, 0.0f,  // Bottom Right
+		-0.5f, -0.5f, 0.0f,	// Bottom Left
+		-0.5f,  0.5f, 0.0f	// Top Left 
+	};
+	GLuint squareIndices[] = {
+		0, 1, 3,	// First Triangle
+		1, 2, 3		// Second Triangle
+	};
+	// Initialize variables
+	GLuint squareVAO, squareVBO, squareEBO;
+	glGenVertexArrays(1, &squareVAO);
+	glGenBuffers(1, &squareVBO);
+	glGenBuffers(1, &squareEBO);
+	// Bind the Vertex Array Object
+	glBindVertexArray(squareVAO);
+		// Copy vertices array in a buffer for OpenGL to use
+		glBindBuffer(GL_ARRAY_BUFFER, squareVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(squareVerts), squareVerts, GL_STATIC_DRAW);
+		// Bind the Element Buffer Object
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, squareEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
+		// Set vertex attributes pointers
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+	// Unbind the Vertex Array Object
+	glBindVertexArray(0);
+
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 
 		// Do all the rendering
+		
+		// Background
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Shader
 		glUseProgram(shaderProgram);
-		glBindVertexArray(vertexArrayObject);
+
+		// Square
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glBindVertexArray(squareVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		// Triangle
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glBindVertexArray(triangleVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
 
