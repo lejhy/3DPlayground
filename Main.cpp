@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#define PI 3.14159265359
+#define PI 3.14159265359f
 // Image loading
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -56,49 +56,58 @@ int main() {
 	}
 
 	// Define the viewport dimensions
-	int viewportWidth, viewportHeight;
+	GLint viewportWidth, viewportHeight;
 	glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
 	glViewport(0, 0, viewportWidth, viewportHeight);
+	GLfloat aspectRatio = (GLfloat)viewportWidth / (GLfloat)viewportHeight;
 
 	// Assign the key callback to our window
 	glfwSetKeyCallback(window, key_callback);
 
 	// Make some geometry to work with
-	// Triangle
-	GLfloat triangleVerts[] = {
-		// Positions		// Colors
-		-0.5f, -0.5f, 0.0f, 0.8f, 0.0f, 0.0f,	// Bottom right
-		0.5f, -0.5f, 0.0f,	0.0f, 0.8f, 0.0f,	// Bottom left
-		0.0f,  0.8f, 0.0f,	0.0f, 0.0f, 0.8f	// Top
-	};
-	// Initialize variables
-	GLuint triangleVAO, triangleVBO;
-	glGenVertexArrays(1, &triangleVAO);
-	glGenBuffers(1, &triangleVBO);
-	// Bind the Vertex Array Object
-	glBindVertexArray(triangleVAO);
-		// Copy vertices array in a buffer for OpenGL to use
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVerts), triangleVerts, GL_STATIC_DRAW);
-		// Set vertex attributes pointers
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(0);
-		// Set color attributes pointers
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3* sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
-	// Unbind the Vertex Array Object
-	glBindVertexArray(0);
-
 	// Square
 	GLfloat squareVerts[] = {
-		0.5f,  0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,   // Top Right
-		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,   // Bottom Right
-		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,   // Bottom Left
-		-0.5f,  0.5f, 0.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f    // Top Left 
-	};
-	GLuint squareIndices[] = {
-		0, 1, 3,	// First Triangle
-		1, 2, 3		// Second Triangle
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  	1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  	1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  	1.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  	1.0f, 1.0f, 0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  	1.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f, 1.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  	1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  	1.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  	1.0f, 1.0f, 0.0f,	0.0f, 1.0f
 	};
 	// Initialize variables
 	GLuint squareVAO, squareVBO, squareEBO;
@@ -110,9 +119,6 @@ int main() {
 		// Copy vertices array in a buffer for OpenGL to use
 		glBindBuffer(GL_ARRAY_BUFFER, squareVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(squareVerts), squareVerts, GL_STATIC_DRAW);
-		// Bind the Element Buffer Object
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, squareEBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 		// Set vertex attributes pointers
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
@@ -127,6 +133,8 @@ int main() {
 
 	// Create a shader
 	Shader shader("vertexShader.vs", "fragmentShader.fs");
+	// Enable depth testing 
+	glEnable(GL_DEPTH_TEST);
 
 	// Set textures
 	GLuint container, awesomeFace;
@@ -173,29 +181,27 @@ int main() {
 		
 		// Background
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Shader
 		shader.use();
 
 		// Transformations
-		glm::mat4 transform;
-		double timeScale = (sin(time) / 2) + 0.5;
-		transform = glm::rotate(transform, (float)(time * PI / 3), glm::vec3(0.0, 0.0, 1.0));
-		transform = glm::scale(transform, glm::vec3(timeScale, timeScale, timeScale));
-		GLuint transformLoc = glGetUniformLocation(shader.Program, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-		//// Uniform
-		//GLfloat colorIntensity = (sin(time) / 2) + 0.5;
-		//GLint colorIntensityLocation = glGetUniformLocation(shader, "colorIntensity");
-		//glUniform1f(colorIntensityLocation, colorIntensity);
-
-		//// Triangle
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glBindVertexArray(triangleVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		//glBindVertexArray(0);
+		// Model
+		glm::mat4 model;
+		model = glm::rotate(model, PI/4*time, glm::vec3(0.5f, 1.0f, 0.0f));
+		GLint modelLoc = glGetUniformLocation(shader.Program, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		// View
+		glm::mat4 view;
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		GLint viewLoc = glGetUniformLocation(shader.Program, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		// Projection
+		glm::mat4 projection;
+		projection = glm::perspective(PI/4, aspectRatio, 0.1f, 100.0f);
+		GLint projectionLoc = glGetUniformLocation(shader.Program, "projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		// Textures
 		glActiveTexture(GL_TEXTURE0);
@@ -208,7 +214,7 @@ int main() {
 		// Square
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBindVertexArray(squareVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
