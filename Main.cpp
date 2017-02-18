@@ -1,5 +1,8 @@
 #include <iostream>
 
+// Image loading
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -17,6 +20,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // The MAIN function, from here we start the application and run the game loop
 int main() {
+	// Create variables for progress and error checking
+	GLint success;
+	GLchar infoLog[512];
+
 	std::cout << "Starting GLFW context, OpenGL 3.3" << std::endl;
 	// Init GLFW
 	glfwInit();
@@ -44,16 +51,12 @@ int main() {
 	}
 
 	// Define the viewport dimensions
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
+	int viewportWidth, viewportHeight;
+	glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 
 	// Assign the key callback to our window
 	glfwSetKeyCallback(window, key_callback);
-
-	// Create variables for progress and error checking
-	GLint success;
-	GLchar infoLog[512];
 
 	// Make some geometry to work with
 	// Triangle
@@ -83,10 +86,10 @@ int main() {
 
 	// Square
 	GLfloat squareVerts[] = {
-		0.5f,  0.5f, 0.0f,	// Top Right
-		0.5f, -0.5f, 0.0f,  // Bottom Right
-		-0.5f, -0.5f, 0.0f,	// Bottom Left
-		-0.5f,  0.5f, 0.0f	// Top Left 
+		0.5f,  0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,   // Top Right
+		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,   // Bottom Right
+		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,   // Bottom Left
+		-0.5f,  0.5f, 0.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f    // Top Left 
 	};
 	GLuint squareIndices[] = {
 		0, 1, 3,	// First Triangle
@@ -106,13 +109,52 @@ int main() {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, squareEBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 		// Set vertex attributes pointers
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
+		// Color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(1);
+		// Set texture attributes pointers
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(2);
 	// Unbind the Vertex Array Object
 	glBindVertexArray(0);
 
 	// Create a shader
 	Shader shader("vertexShader.vs", "fragmentShader.fs");
+
+	// Set textures
+	GLuint container, awesomeFace;
+	int textureWidth, textureHeight, n;
+	unsigned char *image;
+	// Container
+	glGenTextures(1, &container);
+	glBindTexture(GL_TEXTURE_2D, container);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load and generate the texture
+	image = stbi_load("container.jpg", &textureWidth, &textureHeight, &n, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// Awesome Face
+	glGenTextures(1, &awesomeFace);
+	glBindTexture(GL_TEXTURE_2D, awesomeFace);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load and generate the texture, flipping the image on load
+	stbi_set_flip_vertically_on_load(1);
+	image = stbi_load("awesomeface.png", &textureWidth, &textureHeight, &n, 4);
+	stbi_set_flip_vertically_on_load(0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
@@ -136,16 +178,24 @@ int main() {
 		//GLint colorIntensityLocation = glGetUniformLocation(shader, "colorIntensity");
 		//glUniform1f(colorIntensityLocation, colorIntensity);
 
+		//// Triangle
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glBindVertexArray(triangleVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glBindVertexArray(0);
+
+		// Textures
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, container);
+		glUniform1i(glGetUniformLocation(shader.Program, "texture0"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, awesomeFace);
+		glUniform1i(glGetUniformLocation(shader.Program, "texture1"), 1);
+
 		// Square
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBindVertexArray(squareVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-
-		// Triangle
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glBindVertexArray(triangleVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
