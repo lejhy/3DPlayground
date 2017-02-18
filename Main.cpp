@@ -1,5 +1,10 @@
 #include <iostream>
 
+// Mathematics
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#define PI 3.14159265359
 // Image loading
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -172,6 +177,14 @@ int main() {
 
 		// Shader
 		shader.use();
+
+		// Transformations
+		glm::mat4 transform;
+		double timeScale = (sin(time) / 2) + 0.5;
+		transform = glm::rotate(transform, (float)(time * PI / 3), glm::vec3(0.0, 0.0, 1.0));
+		transform = glm::scale(transform, glm::vec3(timeScale, timeScale, timeScale));
+		GLuint transformLoc = glGetUniformLocation(shader.Program, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
 		//// Uniform
 		//GLfloat colorIntensity = (sin(time) / 2) + 0.5;
