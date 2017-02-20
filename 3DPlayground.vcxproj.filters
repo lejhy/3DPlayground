@@ -16,16 +16,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="fragmentShader.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="vertexShader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="light.vs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="light.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="box.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="box.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

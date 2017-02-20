@@ -202,7 +202,7 @@ int main() {
 	// Unbind the Vertex Array Object
 	glBindVertexArray(0);
 	// Create a shader
-	Shader boxShader("vertexShader.vs", "fragmentShader.fs");
+	Shader boxShader("box.vs", "box.fs");
 	// Enable depth testing 
 	glEnable(GL_DEPTH_TEST);
 	// Get vertex shader uniform locations
