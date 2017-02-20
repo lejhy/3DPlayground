@@ -27,6 +27,9 @@ void do_movement();
 // Window dimensions
 const GLuint WIDTH = 1920, HEIGHT = 1080;
 
+//Light
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
 // Create a camera
 Camera camera = Camera();
 
@@ -141,27 +144,6 @@ int main() {
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	// Initialize variables
-	GLuint cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-	// Bind the Vertex Array Object
-	glBindVertexArray(cubeVAO);
-	// Copy vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerts), cubeVerts, GL_STATIC_DRAW);
-	// Set vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	// Color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	// Set texture attributes pointers
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	// Unbind the Vertex Array Object
-	glBindVertexArray(0);
-
 	// Set up textures
 	GLuint container, awesomeFace;
 	int textureWidth, textureHeight, n;
@@ -199,14 +181,54 @@ int main() {
 	stbi_image_free(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	// Container
+	GLuint boxVAO, VBO;
+	glGenVertexArrays(1, &boxVAO);
+	glGenBuffers(1, &VBO);
+	// Bind the Vertex Array Object
+	glBindVertexArray(boxVAO);
+	// Copy vertices array in a buffer for OpenGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerts), cubeVerts, GL_STATIC_DRAW);
+	// Set vertex attributes pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	// Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	// Set texture attributes pointers
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	// Unbind the Vertex Array Object
+	glBindVertexArray(0);
 	// Create a shader
-	Shader shader("vertexShader.vs", "fragmentShader.fs");
+	Shader boxShader("vertexShader.vs", "fragmentShader.fs");
 	// Enable depth testing 
 	glEnable(GL_DEPTH_TEST);
 	// Get vertex shader uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
-	GLint viewLoc = glGetUniformLocation(shader.Program, "view");
-	GLint projectionLoc = glGetUniformLocation(shader.Program, "projection");
+	GLint boxModelLoc = glGetUniformLocation(boxShader.Program, "model");
+	GLint boxViewLoc = glGetUniformLocation(boxShader.Program, "view");
+	GLint boxProjectionLoc = glGetUniformLocation(boxShader.Program, "projection");
+	// Get fragment shader uniform locations
+	GLint boxLightColorLoc = glGetUniformLocation(boxShader.Program, "lightColor");
+
+	// Light
+	GLuint lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	// We only need to bind to the VBO, the container's VBO's data already contains the correct data.
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// Set the vertex attributes (only position data for our lamp)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	// Create a shader
+	Shader lightShader("light.vs", "light.fs");
+	// Get vertex shader uniform locations
+	GLint lightModelLoc = glGetUniformLocation(lightShader.Program, "model");
+	GLint lightViewLoc = glGetUniformLocation(lightShader.Program, "view");
+	GLint lightProjectionLoc = glGetUniformLocation(lightShader.Program, "projection");
+
 
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
@@ -221,40 +243,59 @@ int main() {
 		do_movement();
 
 		// Do all the rendering
-		// Shader
-		shader.use();
 		// Background
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// View transformations
 		glm::mat4 view;
 		view = camera.getViewMatrix();
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		// Projection transformations
 		glm::mat4 projection;
 		projection = glm::perspective(camera.zoom, aspectRatio, 0.1f, 100.0f);
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		// Box
+		// Shader
+		boxShader.use();
+		glUniformMatrix4fv(boxViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(boxProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		// Textures
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, container);
-		glUniform1i(glGetUniformLocation(shader.Program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(boxShader.Program, "texture0"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, awesomeFace);
-		glUniform1i(glGetUniformLocation(shader.Program, "texture1"), 1);
-		// Square
-		glBindVertexArray(cubeVAO);
+		glUniform1i(glGetUniformLocation(boxShader.Program, "texture1"), 1);
+		glUniform3f(boxLightColorLoc, 1.0f, 1.0f, 1.0f);
+		// Geometry
+		glBindVertexArray(boxVAO);
 		for (GLuint i = 0; i < 10; i++) {
-			// Model transformations
+			// Model transformation
 			glm::mat4 model;
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angleOffset = PI / 9 * i;
 			GLfloat angle = angleOffset + (PI / 4 * time);
 			model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(boxModelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			// Draw
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		glBindVertexArray(0);
+
+		// Light
+		// Shader
+		lightShader.use();
+		glUniformMatrix4fv(lightViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(lightProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		// Geometry
+		glBindVertexArray(lightVAO);
+		// Model transformation
+		glm::mat4 model = glm::mat4();
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+		glUniformMatrix4fv(lightModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		// Draw
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
@@ -262,8 +303,9 @@ int main() {
 	}
 
 	// Terminate GLFW, clearing any resources allocated by GLFW.
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteBuffers(1, &cubeVBO);
+	glDeleteVertexArrays(1, &boxVAO);
+	glDeleteVertexArrays(1, &lightVAO);
+	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 	return 0;
 }
