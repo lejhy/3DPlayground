@@ -22,6 +22,7 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void click_callback(GLFWwindow* window, int button, int action, int mode);
 void do_movement();
 
 // Window dimensions
@@ -37,6 +38,7 @@ Camera camera = Camera();
 bool keys[1024];
 GLfloat mouseX = 0, mouseY = 0;
 bool firstMouseMovement = true;
+int animationSpeed = 1;
 
 // Timing
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
@@ -84,6 +86,7 @@ int main() {
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, click_callback);
 
 	// Make some geometry to work with
 	// Cube
@@ -270,6 +273,8 @@ int main() {
 	GLint lightViewLoc = glGetUniformLocation(lightShader.programID, "view");
 	GLint lightProjectionLoc = glGetUniformLocation(lightShader.programID, "projection");
 
+	// Variables to preserve across loops
+	GLfloat gameTime = glfwGetTime();
 
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
@@ -279,6 +284,7 @@ int main() {
 		GLfloat time = glfwGetTime();
 		deltaTime = time - lastFrame;
 		lastFrame = time;
+		gameTime += deltaTime * animationSpeed;
 		// Events
 		glfwPollEvents();
 		do_movement();
@@ -325,7 +331,7 @@ int main() {
 			glm::mat4 model;
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angleOffset = PI / 9 * i;
-			GLfloat angle = angleOffset + (PI / 4 * time);
+			GLfloat angle = (PI / 4 * gameTime) + angleOffset;
 			model = glm::rotate(model, angle, glm::vec3(0.5f, 1.0f, 0.0f));
 			glUniformMatrix4fv(boxModelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			// Draw
@@ -396,6 +402,24 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos) {
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset) {
 	// Pass it on to the camera
 	camera.processMouseScroll(yOffset);
+}
+
+void click_callback(GLFWwindow* window, int button, int action, int mode) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (animationSpeed == 1) {
+			animationSpeed = 0;
+		} else {
+			animationSpeed = 1;
+		}
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+		if (animationSpeed == -1) {
+			animationSpeed = 0;
+		}
+		else {
+			animationSpeed = -1;
+		}
+	}
 }
 
 void do_movement() {
