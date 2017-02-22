@@ -292,7 +292,7 @@ int main() {
 		view = camera.getViewMatrix();
 		// Projection transformations
 		glm::mat4 projection;
-		projection = glm::perspective(camera.zoom, aspectRatio, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.zoom), aspectRatio, 0.1f, 100.0f);
 
 		// Box
 		// Shader

@@ -106,9 +106,9 @@ class Camera {
 		void processMouseScroll(GLfloat yoffset) {
 			if (this->zoom >= 1.0f && this->zoom <= 45.0f)
 				this->zoom -= yoffset;
-			if (this->zoom <= 1.0f)
+			if (this->zoom < 1.0f)
 				this->zoom = 1.0f;
-			if (this->zoom >= 45.0f)
+			if (this->zoom > 45.0f)
 				this->zoom = 45.0f;
 		}
 
