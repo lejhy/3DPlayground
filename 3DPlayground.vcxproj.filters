@@ -25,10 +25,10 @@
     <None Include="light.fs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="box.fs">
+    <None Include="phong.fs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="box.vs">
+    <None Include="phong.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

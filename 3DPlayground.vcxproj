@@ -119,11 +119,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="box.fs" />
+    <None Include="phong.fs" />
     <None Include="light.fs" />
     <None Include="light.vs" />
     <None Include="README.md" />
-    <None Include="box.vs" />
+    <None Include="phong.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />

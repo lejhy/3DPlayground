@@ -146,7 +146,7 @@ int main() {
 	};
 
 	// Set up textures
-	GLuint container, awesomeFace;
+	GLuint container, awesomeFace, container2, container2_specular;
 	int textureWidth, textureHeight, n;
 	unsigned char *image;
 	// Texture 0 - Container
@@ -164,7 +164,7 @@ int main() {
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	// Texture 2 - Awesome Face
+	// Texture 1 - Awesome Face
 	glGenTextures(1, &awesomeFace);
 	glBindTexture(GL_TEXTURE_2D, awesomeFace);
 	// Texture parameters
@@ -177,6 +177,36 @@ int main() {
 	stbi_set_flip_vertically_on_load(1);
 	image = stbi_load("awesomeface.png", &textureWidth, &textureHeight, &n, 4);
 	stbi_set_flip_vertically_on_load(0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// Texture 2 - Container2
+	glGenTextures(1, &container2);
+	glBindTexture(GL_TEXTURE_2D, container2);
+	// Texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load and generate the texture
+	image = stbi_load("container2.png", &textureWidth, &textureHeight, &n, 4);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// Texture 3 - Container2 Specular
+	glGenTextures(1, &container2_specular);
+	glBindTexture(GL_TEXTURE_2D, container2_specular);
+	// Texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load and generate the texture
+	image = stbi_load("container2_specular.png", &textureWidth, &textureHeight, &n, 4);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(image);
@@ -206,7 +236,7 @@ int main() {
 	// Unbind the Vertex Array Object
 	glBindVertexArray(0);
 	// Create a shader
-	Shader boxShader("box.vs", "box.fs");
+	Shader boxShader("phong.vs", "phong.fs");
 	// Enable depth testing 
 	glEnable(GL_DEPTH_TEST);
 	// Get vertex shader uniform locations
@@ -214,9 +244,14 @@ int main() {
 	GLint boxViewLoc = glGetUniformLocation(boxShader.programID, "view");
 	GLint boxProjectionLoc = glGetUniformLocation(boxShader.programID, "projection");
 	// Get fragment shader uniform locations
-	GLint boxLightPositionLoc = glGetUniformLocation(boxShader.programID, "lightPosition");	 
-	GLint boxLightColorLoc = glGetUniformLocation(boxShader.programID, "lightColor");
-	GLint viewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPosition");
+	GLint boxLightPositionLoc = glGetUniformLocation(boxShader.programID, "light.position");	 
+	GLint boxLightAmbientLoc = glGetUniformLocation(boxShader.programID, "light.ambient");
+	GLint boxLightDiffuseLoc = glGetUniformLocation(boxShader.programID, "light.diffuse");
+	GLint boxLightSpecularLoc = glGetUniformLocation(boxShader.programID, "light.specular");
+	GLint boxViewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPosition");
+	GLint boxMaterialDiffuseLoc = glGetUniformLocation(boxShader.programID, "material.diffuse");
+	GLint boxMaterialSpecularLoc = glGetUniformLocation(boxShader.programID, "material.specular");
+	GLint boxMaterialShineLoc = glGetUniformLocation(boxShader.programID, "material.shininess");
 
 	// Light
 	GLuint lightVAO;
@@ -268,16 +303,21 @@ int main() {
 		glUniformMatrix4fv(boxProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		// Textures
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, container);
-		glUniform1i(glGetUniformLocation(boxShader.programID, "texture0"), 0);
+		glBindTexture(GL_TEXTURE_2D, container2);
+		glUniform1i(boxMaterialDiffuseLoc, 0);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, awesomeFace);
-		glUniform1i(glGetUniformLocation(boxShader.programID, "texture1"), 1);
+		glBindTexture(GL_TEXTURE_2D, container2_specular);
+		glUniform1i(boxMaterialSpecularLoc, 1);
+		// Material
+		glUniform3f(boxMaterialSpecularLoc, 0.5f, 0.5f, 0.5f);
+		glUniform1f(boxMaterialShineLoc, 32.0f);
 		// Light sources
-		glUniform3f(boxLightColorLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(boxLightAmbientLoc, 0.2f, 0.2f, 0.2f);
+		glUniform3f(boxLightDiffuseLoc, 0.5f, 0.5f, 0.5f);
+		glUniform3f(boxLightSpecularLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(boxLightPositionLoc, lightPosition.x, lightPosition.y, lightPosition.z);
 		// Camera location
-		glUniform3f(viewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
+		glUniform3f(boxViewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
 		// Geometry
 		glBindVertexArray(boxVAO);
 		for (GLuint i = 0; i < 10; i++) {
