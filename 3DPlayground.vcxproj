@@ -129,6 +129,10 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="shader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="awesomeface.png" />
+    <Image Include="container.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

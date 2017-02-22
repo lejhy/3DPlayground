@@ -9,27 +9,27 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Shaders">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\test">
-      <UniqueIdentifier>{8e060699-4920-4353-848c-60dea7774e70}</UniqueIdentifier>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{e83c11ed-7fcc-4900-98ad-d5957325b245}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
     <None Include="light.vs">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="light.fs">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="box.fs">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="box.vs">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -39,10 +39,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
-      <Filter>Source Files\test</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
-      <Filter>Source Files\test</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="awesomeface.png">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="container.jpg">
+      <Filter>Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
