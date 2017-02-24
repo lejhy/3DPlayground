@@ -5,10 +5,10 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 color;
 layout (location = 3) in vec2 texture;
 
-out vec3 fragmentPosition;
-out vec3 normalVector;
-out vec3 vertexColor;
-out vec2 textureCoordinates;
+out vec3 FragPos;
+out vec3 Normal;
+out vec3 VertValue;
+out vec2 TexCoords;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -16,8 +16,8 @@ uniform mat4 projection;
 
 void main () {
 	gl_Position = projection * view * model * vec4(position, 1.0f);
-	fragmentPosition = vec3(model * vec4(position, 1.0f));
-	normalVector = mat3(transpose(inverse(model))) * normal;
-	vertexColor = color;
-	textureCoordinates = texture;
+	FragPos = vec3(model * vec4(position, 1.0f));
+	Normal = mat3(transpose(inverse(model))) * normal;
+	VertValue = color;
+	TexCoords = texture;
 }

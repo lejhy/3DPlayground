@@ -28,9 +28,6 @@ void do_movement();
 // Window dimensions
 const GLuint WIDTH = 1920, HEIGHT = 1080;
 
-//Light
-glm::vec3 lightPosition(1.2f, 1.0f, 5.0f);
-
 // Create a camera
 Camera camera = Camera();
 
@@ -247,16 +244,57 @@ int main() {
 	GLint boxViewLoc = glGetUniformLocation(boxShader.programID, "view");
 	GLint boxProjectionLoc = glGetUniformLocation(boxShader.programID, "projection");
 	// Get fragment shader uniform locations
-	GLint boxLightPositionLoc = glGetUniformLocation(boxShader.programID, "light.position");	 
-	GLint boxLightAmbientLoc = glGetUniformLocation(boxShader.programID, "light.ambient");
-	GLint boxLightDiffuseLoc = glGetUniformLocation(boxShader.programID, "light.diffuse");
-	GLint boxLightSpecularLoc = glGetUniformLocation(boxShader.programID, "light.specular");
 	GLint boxViewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPosition");
 	GLint boxMaterialDiffuseLoc = glGetUniformLocation(boxShader.programID, "material.diffuse");
 	GLint boxMaterialSpecularLoc = glGetUniformLocation(boxShader.programID, "material.specular");
 	GLint boxMaterialShineLoc = glGetUniformLocation(boxShader.programID, "material.shininess");
+	// Directional light
+	GLint boxDirLightDirectionLoc = glGetUniformLocation(boxShader.programID, "dirLight.direction");	 
+	GLint boxDirLightAmbientLoc = glGetUniformLocation(boxShader.programID, "dirLight.ambient");
+	GLint boxDirLightDiffuseLoc = glGetUniformLocation(boxShader.programID, "dirLight.diffuse");
+	GLint boxDirLightSpecularLoc = glGetUniformLocation(boxShader.programID, "dirLight.specular");
+	// Point lights
+	// 1
+	GLint boxPointLight1DirectionLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].position");
+	GLint boxPointLight1ConstantLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].constant");
+	GLint boxPointLight1LinearLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].linear");
+	GLint boxPointLight1QuadraticLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].quadratic");
+	GLint boxPointLight1AmbientLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].ambient");
+	GLint boxPointLight1DiffuseLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].diffuse");
+	GLint boxPointLight1SpecularLoc = glGetUniformLocation(boxShader.programID, "pointLights[0].specular");
+	// 2
+	GLint boxPointLight2DirectionLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].position");
+	GLint boxPointLight2ConstantLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].constant");
+	GLint boxPointLight2LinearLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].linear");
+	GLint boxPointLight2QuadraticLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].quadratic");
+	GLint boxPointLight2AmbientLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].ambient");
+	GLint boxPointLight2DiffuseLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].diffuse");
+	GLint boxPointLight2SpecularLoc = glGetUniformLocation(boxShader.programID, "pointLights[1].specular");
+	// 3
+	GLint boxPointLight3DirectionLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].position");
+	GLint boxPointLight3ConstantLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].constant");
+	GLint boxPointLight3LinearLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].linear");
+	GLint boxPointLight3QuadraticLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].quadratic");
+	GLint boxPointLight3AmbientLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].ambient");
+	GLint boxPointLight3DiffuseLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].diffuse");
+	GLint boxPointLight3SpecularLoc = glGetUniformLocation(boxShader.programID, "pointLights[2].specular");
+	// 4
+	GLint boxPointLight4DirectionLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].position");
+	GLint boxPointLight4ConstantLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].constant");
+	GLint boxPointLight4LinearLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].linear");
+	GLint boxPointLight4QuadraticLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].quadratic");
+	GLint boxPointLight4AmbientLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].ambient");
+	GLint boxPointLight4DiffuseLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].diffuse");
+	GLint boxPointLight4SpecularLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].specular");
+
 
 	// Light
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f, 0.2f, 2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f),
+		glm::vec3(0.0f, 0.0f, -3.0f)
+	};
 	GLuint lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -291,7 +329,7 @@ int main() {
 
 		// Do all the rendering
 		// Background
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// View transformations
 		glm::mat4 view;
@@ -318,10 +356,44 @@ int main() {
 		glUniform3f(boxMaterialSpecularLoc, 0.5f, 0.5f, 0.5f);
 		glUniform1f(boxMaterialShineLoc, 32.0f);
 		// Light sources
-		glUniform3f(boxLightAmbientLoc, 0.2f, 0.2f, 0.2f);
-		glUniform3f(boxLightDiffuseLoc, 0.5f, 0.5f, 0.5f);
-		glUniform3f(boxLightSpecularLoc, 1.0f, 1.0f, 1.0f);
-		glUniform3f(boxLightPositionLoc, lightPosition.x, lightPosition.y, lightPosition.z);
+		// Directional
+		glUniform3f(boxDirLightDirectionLoc, -0.2f, -1.0f, -0.3f);
+		glUniform3f(boxDirLightAmbientLoc, 0.05f, 0.05f, 0.05f);
+		glUniform3f(boxDirLightDiffuseLoc, 0.4f, 0.4f, 0.4f);
+		glUniform3f(boxDirLightSpecularLoc, 0.5f, 0.5f, 0.5f);
+		// Spot Light 1
+		glUniform3f(boxPointLight1DirectionLoc, pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
+		glUniform1f(boxPointLight1ConstantLoc, 1.0f);
+		glUniform1f(boxPointLight1LinearLoc, 0.09);
+		glUniform1f(boxPointLight1QuadraticLoc, 0.032);
+		glUniform3f(boxPointLight1AmbientLoc, 0.05f, 0.05f, 0.05f);
+		glUniform3f(boxPointLight1DiffuseLoc, 0.8f, 0.8f, 0.8f);
+		glUniform3f(boxPointLight1SpecularLoc, 1.0f, 1.0f, 1.0f);
+		// Spot Light 2
+		glUniform3f(boxPointLight2DirectionLoc, pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
+		glUniform1f(boxPointLight2ConstantLoc, 1.0f);
+		glUniform1f(boxPointLight2LinearLoc, 0.09);
+		glUniform1f(boxPointLight2QuadraticLoc, 0.032);
+		glUniform3f(boxPointLight2AmbientLoc, 0.05f, 0.05f, 0.05f);
+		glUniform3f(boxPointLight2DiffuseLoc, 0.8f, 0.8f, 0.8f);
+		glUniform3f(boxPointLight2SpecularLoc, 1.0f, 1.0f, 1.0f);
+		// Spot Light 3
+		glUniform3f(boxPointLight3DirectionLoc, pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
+		glUniform1f(boxPointLight3ConstantLoc, 1.0f);
+		glUniform1f(boxPointLight3LinearLoc, 0.09);
+		glUniform1f(boxPointLight3QuadraticLoc, 0.032);
+		glUniform3f(boxPointLight3AmbientLoc, 0.05f, 0.05f, 0.05f);
+		glUniform3f(boxPointLight3DiffuseLoc, 0.8f, 0.8f, 0.8f);
+		glUniform3f(boxPointLight3SpecularLoc, 1.0f, 1.0f, 1.0f);
+		// Spot Light 4
+		glUniform3f(boxPointLight4DirectionLoc, pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
+		glUniform1f(boxPointLight4ConstantLoc, 1.0f);
+		glUniform1f(boxPointLight4LinearLoc, 0.09);
+		glUniform1f(boxPointLight4QuadraticLoc, 0.032);
+		glUniform3f(boxPointLight4AmbientLoc, 0.05f, 0.05f, 0.05f);
+		glUniform3f(boxPointLight4DiffuseLoc, 0.8f, 0.8f, 0.8f);
+		glUniform3f(boxPointLight4SpecularLoc, 1.0f, 1.0f, 1.0f);
+
 		// Camera location
 		glUniform3f(boxViewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
 		// Geometry
@@ -347,13 +419,15 @@ int main() {
 		glUniformMatrix4fv(lightProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		// Geometry
 		glBindVertexArray(lightVAO);
-		// Model transformation
-		glm::mat4 model;
-		model = glm::translate(model, lightPosition);
-		//model = glm::scale(model, glm::vec3(0.2f));
-		glUniformMatrix4fv(lightModelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		// Draw
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (GLuint i = 0; i < 4; i++) {
+			// Model transformation
+			glm::mat4 model;
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			glUniformMatrix4fv(lightModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			// Draw
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 
 		// Swap the screen buffers
