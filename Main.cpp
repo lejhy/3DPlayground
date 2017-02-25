@@ -286,7 +286,17 @@ int main() {
 	GLint boxPointLight4AmbientLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].ambient");
 	GLint boxPointLight4DiffuseLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].diffuse");
 	GLint boxPointLight4SpecularLoc = glGetUniformLocation(boxShader.programID, "pointLights[3].specular");
-
+	// Spot light
+	GLint boxSpotLightPositionLoc = glGetUniformLocation(boxShader.programID, "spotLight.position");
+	GLint boxSpotLightDirectionLoc = glGetUniformLocation(boxShader.programID, "spotLight.direction");
+	GLint boxSpotLightCutOffLoc = glGetUniformLocation(boxShader.programID, "spotLight.cutOff");
+	GLint boxSpotLightOuterCutOffLoc = glGetUniformLocation(boxShader.programID, "spotLight.outerCutOff");
+	GLint boxSpotLightConstantLoc = glGetUniformLocation(boxShader.programID, "spotLight.constant");
+	GLint boxSpotLightLinearLoc = glGetUniformLocation(boxShader.programID, "spotLight.linear");
+	GLint boxSpotLightQuadraticLoc = glGetUniformLocation(boxShader.programID, "spotLight.quadratic");
+	GLint boxSpotLightAmbientLoc = glGetUniformLocation(boxShader.programID, "spotLight.ambient");
+	GLint boxSpotLightDiffuseLoc = glGetUniformLocation(boxShader.programID, "spotLight.diffuse");
+	GLint boxSpotLightSpecularLoc = glGetUniformLocation(boxShader.programID, "spotLight.specular");
 
 	// Light
 	glm::vec3 pointLightPositions[] = {
@@ -361,7 +371,7 @@ int main() {
 		glUniform3f(boxDirLightAmbientLoc, 0.05f, 0.05f, 0.05f);
 		glUniform3f(boxDirLightDiffuseLoc, 0.4f, 0.4f, 0.4f);
 		glUniform3f(boxDirLightSpecularLoc, 0.5f, 0.5f, 0.5f);
-		// Spot Light 1
+		// Point Light 1
 		glUniform3f(boxPointLight1DirectionLoc, pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
 		glUniform1f(boxPointLight1ConstantLoc, 1.0f);
 		glUniform1f(boxPointLight1LinearLoc, 0.09);
@@ -369,7 +379,7 @@ int main() {
 		glUniform3f(boxPointLight1AmbientLoc, 0.05f, 0.05f, 0.05f);
 		glUniform3f(boxPointLight1DiffuseLoc, 0.8f, 0.8f, 0.8f);
 		glUniform3f(boxPointLight1SpecularLoc, 1.0f, 1.0f, 1.0f);
-		// Spot Light 2
+		// Point Light 2
 		glUniform3f(boxPointLight2DirectionLoc, pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 		glUniform1f(boxPointLight2ConstantLoc, 1.0f);
 		glUniform1f(boxPointLight2LinearLoc, 0.09);
@@ -377,7 +387,7 @@ int main() {
 		glUniform3f(boxPointLight2AmbientLoc, 0.05f, 0.05f, 0.05f);
 		glUniform3f(boxPointLight2DiffuseLoc, 0.8f, 0.8f, 0.8f);
 		glUniform3f(boxPointLight2SpecularLoc, 1.0f, 1.0f, 1.0f);
-		// Spot Light 3
+		// Point Light 3
 		glUniform3f(boxPointLight3DirectionLoc, pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
 		glUniform1f(boxPointLight3ConstantLoc, 1.0f);
 		glUniform1f(boxPointLight3LinearLoc, 0.09);
@@ -385,7 +395,7 @@ int main() {
 		glUniform3f(boxPointLight3AmbientLoc, 0.05f, 0.05f, 0.05f);
 		glUniform3f(boxPointLight3DiffuseLoc, 0.8f, 0.8f, 0.8f);
 		glUniform3f(boxPointLight3SpecularLoc, 1.0f, 1.0f, 1.0f);
-		// Spot Light 4
+		// Point Light 4
 		glUniform3f(boxPointLight4DirectionLoc, pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
 		glUniform1f(boxPointLight4ConstantLoc, 1.0f);
 		glUniform1f(boxPointLight4LinearLoc, 0.09);
@@ -393,6 +403,17 @@ int main() {
 		glUniform3f(boxPointLight4AmbientLoc, 0.05f, 0.05f, 0.05f);
 		glUniform3f(boxPointLight4DiffuseLoc, 0.8f, 0.8f, 0.8f);
 		glUniform3f(boxPointLight4SpecularLoc, 1.0f, 1.0f, 1.0f);
+		// Spot Light
+		glUniform3f(boxSpotLightPositionLoc, camera.position.x, camera.position.y, camera.position.z);
+		glUniform3f(boxSpotLightDirectionLoc, camera.front.x, camera.front.y, camera.front.z);
+		glUniform1f(boxSpotLightCutOffLoc, glm::cos(glm::radians(12.5f)));
+		glUniform1f(boxSpotLightOuterCutOffLoc, glm::cos(glm::radians(15.0f)));
+		glUniform1f(boxSpotLightConstantLoc, 1.0f);
+		glUniform1f(boxSpotLightLinearLoc, 0.09);
+		glUniform1f(boxSpotLightQuadraticLoc, 0.032);
+		glUniform3f(boxSpotLightAmbientLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(boxSpotLightDiffuseLoc, 0.0f, 0.0f, 0.0f);
+		glUniform3f(boxSpotLightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
 		// Camera location
 		glUniform3f(boxViewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
