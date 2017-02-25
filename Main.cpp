@@ -249,8 +249,8 @@ int main() {
 	GLint boxProjectionLoc = glGetUniformLocation(boxShader.programID, "projection");
 	// Get fragment shader uniform locations
 	GLint boxViewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPosition");
-	GLint boxMaterialDiffuseLoc = glGetUniformLocation(boxShader.programID, "material.diffuse");
-	GLint boxMaterialSpecularLoc = glGetUniformLocation(boxShader.programID, "material.specular");
+	GLint boxMaterialDiffuseLoc = glGetUniformLocation(boxShader.programID, "material.texture_diffuse0");
+	GLint boxMaterialSpecularLoc = glGetUniformLocation(boxShader.programID, "material.texture_specular0");
 	GLint boxMaterialShineLoc = glGetUniformLocation(boxShader.programID, "material.shininess");
 	// Directional light
 	GLint boxDirLightDirectionLoc = glGetUniformLocation(boxShader.programID, "dirLight.direction");	 
