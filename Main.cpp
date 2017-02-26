@@ -34,7 +34,7 @@ void do_movement();
 const GLuint WIDTH = 1920, HEIGHT = 1080;
 
 // Create a camera
-Camera camera = Camera();
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // Controls
 bool keys[1024];
@@ -246,7 +246,7 @@ int main() {
 	GLint boxViewLoc = glGetUniformLocation(boxShader.programID, "view");
 	GLint boxProjectionLoc = glGetUniformLocation(boxShader.programID, "projection");
 	// Get fragment shader uniform locations
-	GLint boxViewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPosition");
+	GLint boxViewPositionLoc = glGetUniformLocation(boxShader.programID, "viewPos");
 	GLint boxMaterialDiffuseLoc = glGetUniformLocation(boxShader.programID, "material.texture_diffuse0");
 	GLint boxMaterialSpecularLoc = glGetUniformLocation(boxShader.programID, "material.texture_specular0");
 	GLint boxMaterialShineLoc = glGetUniformLocation(boxShader.programID, "material.shininess");
@@ -416,8 +416,8 @@ int main() {
 		glUniform1f(boxSpotLightConstantLoc, 1.0f);
 		glUniform1f(boxSpotLightLinearLoc, 0.09);
 		glUniform1f(boxSpotLightQuadraticLoc, 0.032);
-		glUniform3f(boxSpotLightAmbientLoc, 1.0f, 1.0f, 1.0f);
-		glUniform3f(boxSpotLightDiffuseLoc, 0.0f, 0.0f, 0.0f);
+		glUniform3f(boxSpotLightAmbientLoc, 0.0f, 0.0f, 0.0f);
+		glUniform3f(boxSpotLightDiffuseLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(boxSpotLightSpecularLoc, 1.0f, 1.0f, 1.0f);
 		// Camera location
 		glUniform3f(boxViewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
