@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 using namespace std;
-// Mathematics
+// glm
 #include <glm/glm.hpp>
 // GLEW
 #include <GL/glew.h>
