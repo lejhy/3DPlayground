@@ -57,7 +57,7 @@ class Mesh {
 					ss << specularNr++; // Transfer GLuint to stream
 				number = ss.str();
 
-				glUniform1f(glGetUniformLocation(shader.programID, ("material." + name + number).c_str()), i);
+				glUniform1i(glGetUniformLocation(shader.programID, ("material." + name + number).c_str()), i);
 				glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 			}
 			glActiveTexture(GL_TEXTURE0);

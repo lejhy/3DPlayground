@@ -144,7 +144,7 @@ class Lights {
 		}
 
 		void use(Shader shader) {
-			for (int i = 0; i < nrOfDirLights; i++) {
+			for (GLuint i = 0; i < nrOfDirLights; i++) {
 				string light = "dirLights[" + to_string(i) + "]";
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".direction").c_str()), dirLights[i].direction.x, dirLights[i].direction.y, dirLights[i].direction.z);
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".ambient").c_str()), dirLights[i].ambient.x, dirLights[i].ambient.y, dirLights[i].ambient.z);
@@ -152,7 +152,7 @@ class Lights {
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".specular").c_str()), dirLights[i].specular.x, dirLights[i].specular.y, dirLights[i].specular.z);
 			}
 
-			for (int i = 0; i < nrOfPointLights; i++) {
+			for (GLuint i = 0; i < nrOfPointLights; i++) {
 				string light = "pointLights[" + to_string(i) + "]";
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".position").c_str()), pointLights[i].position.x, pointLights[i].position.y, pointLights[i].position.z);
 				glUniform1f(glGetUniformLocation(shader.programID, (light + ".constant").c_str()), pointLights[i].constant);
@@ -163,7 +163,7 @@ class Lights {
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".specular").c_str()), pointLights[i].specular.x, pointLights[i].specular.y, pointLights[i].specular.z);
 			}
 
-			for (int i = 0; i < nrOfSpotLights; i++) {
+			for (GLuint i = 0; i < nrOfSpotLights; i++) {
 				string light = "spotLights[" + to_string(i) + "]";
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".position").c_str()), spotLights[i].position.x, spotLights[i].position.y, spotLights[i].position.z);
 				glUniform3f(glGetUniformLocation(shader.programID, (light + ".direction").c_str()), spotLights[i].direction.x, spotLights[i].direction.y, spotLights[i].direction.z);
