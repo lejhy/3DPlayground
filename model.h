@@ -12,8 +12,8 @@ using namespace std;
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 // Classes
-#include "shader.h"
-#include "mesh.h"
+#include "Shader.h"
+#include "Mesh.h"
 
 // Functions
 GLint textureFromFile(const char* path, string directory);

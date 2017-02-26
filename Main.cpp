@@ -19,9 +19,10 @@
 #include <GLFW/glfw3.h>
 
 // Other includes
-#include "shader.h"
-#include "camera.h"
-#include "model.h"
+#include "Shader.h"
+#include "Camera.h"
+#include "Model.h"
+#include "Lights.h"
 
 //functions
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);

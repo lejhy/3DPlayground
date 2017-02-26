@@ -10,7 +10,7 @@ using namespace glm;
 // GLEW
 #include <GL\glew.h>
 // Includes
-#include "shader.h"
+#include "Shader.h"
 
 struct DirLight {
 	vec3 direction;

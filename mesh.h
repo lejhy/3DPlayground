@@ -10,7 +10,7 @@ using namespace std;
 // GLEW
 #include <GL/glew.h>
 // Shader
-#include "shader.h"
+#include "Shader.h"
 
 
 struct Vertex {
