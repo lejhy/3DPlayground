@@ -11,12 +11,12 @@ using namespace std;
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-// Image loading
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 // Classes
 #include "shader.h"
 #include "mesh.h"
+
+// Functions
+GLint textureFromFile(const char* path, string directory);
 
 class Model {
 	public:
@@ -26,7 +26,7 @@ class Model {
 		{
 			this->loadModel(path);
 		}
-		void Draw(Shader shader) {
+		void draw(Shader shader) {
 			for (GLuint i = 0; i < this->meshes.size(); i++) {
 				this->meshes[i].Draw(shader);
 			}
@@ -88,7 +88,6 @@ class Model {
 				vector.y = mesh->mNormals[i].y;
 				vector.z = mesh->mNormals[i].z;
 				vertex.normal = vector;
-				vertices.push_back(vertex);
 
 				// Texture coordinates
 				if (mesh->mTextureCoords[0]) {
@@ -100,6 +99,7 @@ class Model {
 				else {
 					vertex.texCoords = glm::vec2(0.0f, 0.0f);
 				}
+				vertices.push_back(vertex);
 			}
 
 			// Indices
@@ -159,7 +159,7 @@ GLint textureFromFile(const char* path, string directory) {
 
 	// Assign texture to ID
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// Parameters

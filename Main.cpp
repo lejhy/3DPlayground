@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #define PI 3.14159265359f
 // Image loading
-#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION    
 #include <stb/stb_image.h>
 // GLEW
 #define GLEW_STATIC
@@ -21,6 +21,7 @@
 // Other includes
 #include "shader.h"
 #include "camera.h"
+#include "model.h"
 
 //functions
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -92,48 +93,48 @@ int main() {
 	// Make some geometry to work with
 	// Cube
 	GLfloat cubeVerts[] = {
-		// Position				Normals					Color				Texture
-		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		// Position				Normals					Texture
+		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  	0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
 
-		-0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f, 0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
 
-		0.5f,  0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 1.0f, 0.0f,	0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  	0.0f,  1.0f,  0.0f,		0.0f, 1.0f
 	};
 	// Transformations
 	glm::vec3 cubePositions[] = {
@@ -226,17 +227,14 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerts), cubeVerts, GL_STATIC_DRAW);
 	// Set vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	// Normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
-	// Color attributes
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
 	// Texture attributes
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
 	// Unbind the Vertex Array Object
 	glBindVertexArray(0);
 	// Create a shader
@@ -315,7 +313,7 @@ int main() {
 	// We only need to bind to the VBO, the container's VBO's data already contains the correct data.
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	// Set the vertex attributes (only position data for our lamp)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	// Create a shader
@@ -327,6 +325,9 @@ int main() {
 
 	// Variables to preserve across loops
 	GLfloat gameTime = glfwGetTime();
+
+	// Nanosuit
+	Model nanoSuit("Models/NanoSuit/nanosuit.obj");
 
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
@@ -418,7 +419,6 @@ int main() {
 		glUniform3f(boxSpotLightAmbientLoc, 1.0f, 1.0f, 1.0f);
 		glUniform3f(boxSpotLightDiffuseLoc, 0.0f, 0.0f, 0.0f);
 		glUniform3f(boxSpotLightSpecularLoc, 1.0f, 1.0f, 1.0f);
-
 		// Camera location
 		glUniform3f(boxViewPositionLoc, camera.position.x, camera.position.y, camera.position.z);
 		// Geometry
@@ -436,6 +436,15 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
+
+		// Nanosuit
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(-2.0f, -1.75f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		GLfloat angle = (PI / 4 * gameTime);
+		model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(boxModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		nanoSuit.draw(boxShader);
 
 		// Light
 		// Shader
@@ -531,4 +540,8 @@ void do_movement() {
 		camera.processKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
 		camera.processKeyboard(RIGHT, deltaTime);
+	if (keys[GLFW_KEY_X])
+		camera.processKeyboard(UP, deltaTime);
+	if (keys[GLFW_KEY_Z])
+		camera.processKeyboard(DOWN, deltaTime);
 }

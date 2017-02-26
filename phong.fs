@@ -5,6 +5,7 @@ struct Material {
 	sampler2D texture_diffuse0;
 	sampler2D texture_diffuse1;
 	sampler2D texture_diffuse2;
+	sampler2D texture_diffuse3;
 	sampler2D texture_specular0;
 	sampler2D texture_specular1;
 	float shininess;
@@ -47,7 +48,6 @@ struct SpotLight {
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec3 VertValue;
 in vec2 TexCoords;
 
 uniform Material material;
