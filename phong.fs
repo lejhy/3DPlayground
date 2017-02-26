@@ -1,5 +1,7 @@
 #version 330 core
 #define NR_POINT_LIGHTS 4  
+#define NR_DIR_LIGHTS 1 
+#define NR_SPOT_LIGHTS 1
 
 struct Material {
 	sampler2D texture_diffuse0;
@@ -51,9 +53,9 @@ in vec3 Normal;
 in vec2 TexCoords;
 
 uniform Material material;
-uniform DirLight dirLight;
+uniform DirLight dirLights[NR_DIR_LIGHTS];
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform SpotLight spotLight;
+uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 uniform vec3 viewPos;
 
 out vec4 color;
@@ -66,11 +68,16 @@ void main () {
 	vec3 normal = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
 
-	vec3 result = calcDirLight(dirLight, normal, viewDir);
+	vec3 result;
+	for (int i = 0; i < NR_DIR_LIGHTS; i++) {
+		result += calcDirLight(dirLights[i], normal, viewDir);
+	}
 	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
 		result += calcPointLight(pointLights[i], normal, FragPos, viewDir);
 	}
-	result += calcSpotLight(spotLight, normal, FragPos, viewDir);
+	for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
+		result += calcSpotLight(spotLights[i], normal, FragPos, viewDir);
+	}
 	
 	color = vec4(result, 1.0f);
 }
