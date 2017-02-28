@@ -124,11 +124,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="phong.fs" />
-    <None Include="light.fs" />
-    <None Include="light.vs" />
+    <None Include="phong.frag" />
+    <None Include="light.frag" />
+    <None Include="light.vert" />
     <None Include="README.md" />
-    <None Include="phong.vs" />
+    <None Include="phong.vert" />
+    <None Include="z.frag" />
+    <None Include="z_linear.frag" />
+    <None Include="z_linear.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

@@ -93,7 +93,7 @@ int main() {
 	glfwSetMouseButtonCallback(window, click_callback);
 
 	// Create a shader
-	Shader shader("phong.vs", "phong.fs");
+	Shader shader("phong.vert", "phong.frag");
 
 	// Enable depth testing 
 	glEnable(GL_DEPTH_TEST);
@@ -145,7 +145,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		// Projection transformations
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera.zoom), aspectRatio, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.zoom), aspectRatio, 0.1f, 10.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		// Light sources
 		lights.use(shader);

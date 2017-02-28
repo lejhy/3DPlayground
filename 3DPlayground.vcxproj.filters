@@ -19,16 +19,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="light.vs">
+    <None Include="light.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="light.fs">
+    <None Include="light.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="phong.fs">
+    <None Include="phong.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="phong.vs">
+    <None Include="phong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="z.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="z_linear.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="z_linear.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

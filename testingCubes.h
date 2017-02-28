@@ -179,8 +179,8 @@ void testingCubesInit() {
 
 void testingCubesDraw(glm::mat4 view, glm::mat4 projection, vec3 cameraPosition, GLfloat gameTime, Lights *lights) {
 	// Shaders
-	Shader boxShader("phong.vs", "phong.fs");
-	Shader lightShader("light.vs", "light.fs");
+	Shader boxShader("phong.vert", "phong.frag");
+	Shader lightShader("light.vert", "light.frag");
 	// Get vertex shader uniform locations
 	GLint boxModelLoc = glGetUniformLocation(boxShader.programID, "model");
 	GLint boxViewLoc = glGetUniformLocation(boxShader.programID, "view");
