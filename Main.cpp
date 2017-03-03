@@ -93,7 +93,7 @@ int main() {
 	glfwSetMouseButtonCallback(window, click_callback);
 
 	// Create a shader
-	Shader shader("z_linear.vert", "z_linear.frag");
+	Shader shader("phong.vert", "phong.frag");
 
 	// Enable depth testing 
 	glEnable(GL_DEPTH_TEST);
