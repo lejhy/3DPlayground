@@ -127,6 +127,7 @@
     <None Include="phong.frag" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="black.frag" />
     <None Include="README.md" />
     <None Include="phong.vert" />
     <None Include="z.frag" />
