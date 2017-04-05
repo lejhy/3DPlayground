@@ -93,8 +93,8 @@ int main() {
 	glfwSetMouseButtonCallback(window, click_callback);
 
 	// Create a shader
-	Shader shader("phong.vert", "phong.frag");
-	Shader black("phong.vert", "black.frag");
+	Shader phong("phong.vert", "phong.frag");
+	Shader blending("phong.vert", "blending.frag");
 
 	// Enable depth and stencil testing 
 	glEnable(GL_DEPTH_TEST);
@@ -118,6 +118,15 @@ int main() {
 
 	// testing Cubes
 	testingCubesInit();
+
+	// grass
+	Model grass("Models/Grass/grass.obj");
+	vector<glm::vec3> vegetation;
+	vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+	vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+	vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+	vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+	vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
 
 	// Program loop
 	while (!glfwWindowShouldClose(window)) {
@@ -151,19 +160,32 @@ int main() {
 		testingCubesDraw(view, projection, camera.position, gameTime, &lights);
 
 		// Nanosuit
-		shader.use();
-		lights.use(shader);
+		phong.use();
+		lights.use(phong);
 		glm::mat4 model = glm::mat4();
 		model = glm::translate(model, glm::vec3(-2.0f, -1.75f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		GLfloat angle = (PI / 4 * gameTime);
 		model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniform3f(glGetUniformLocation(shader.programID, "viewPos"), camera.position.x, camera.position.y, camera.position.z);
-		glUniform1f(glGetUniformLocation(shader.programID, "material.shininess"), 32.0f);
-		nanoSuit.draw(shader);
+		glUniformMatrix4fv(glGetUniformLocation(phong.programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(phong.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(phong.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniform3f(glGetUniformLocation(phong.programID, "viewPos"), camera.position.x, camera.position.y, camera.position.z);
+		glUniform1f(glGetUniformLocation(phong.programID, "material.shininess"), 32.0f);
+		nanoSuit.draw(phong);
+
+		// grass
+		blending.use();
+		lights.use(blending);
+		glUniformMatrix4fv(glGetUniformLocation(blending.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(blending.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		for (GLuint i = 0; i < vegetation.size(); i++)
+		{
+			model = glm::mat4();
+			model = glm::translate(model, vegetation[i]);
+			glUniformMatrix4fv(glGetUniformLocation(blending.programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			grass.draw(blending);
+		}
 
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
