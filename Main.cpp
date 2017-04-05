@@ -99,9 +99,6 @@ int main() {
 	// Enable depth and stencil testing 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	// Lights
 	Lights lights;
@@ -139,62 +136,34 @@ int main() {
 		lights.setDir(spotLight1, vec3(camera.front.x, camera.front.y, camera.front.z));
 
 		// Do all the rendering
-		// Background
+		// Clear everything
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Shader
-		shader.use();
-		// View transformations
+		// View transformation
 		glm::mat4 view;
 		view = camera.getViewMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		// Projection transformations
+		// Projection transformation
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(camera.zoom), aspectRatio, 1.0f, 100.0f);
-		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		// Light sources
-		lights.use(shader);
-		// Camera location
-		glUniform3f(glGetUniformLocation(shader.programID, "viewPos"), camera.position.x, camera.position.y, camera.position.z);
-		glStencilMask(0x00);
+		
 		// testing Cubes
-		//testingCubesDraw(view, projection, camera.position, gameTime, &lights);
+		testingCubesDraw(view, projection, camera.position, gameTime, &lights);
 
-		// 1st pass with normal stencil
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glStencilMask(0xFF);
 		// Nanosuit
+		shader.use();
+		lights.use(shader);
 		glm::mat4 model = glm::mat4();
 		model = glm::translate(model, glm::vec3(-2.0f, -1.75f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		GLfloat angle = (PI / 4 * gameTime);
 		model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(shader.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniform3f(glGetUniformLocation(shader.programID, "viewPos"), camera.position.x, camera.position.y, camera.position.z);
 		glUniform1f(glGetUniformLocation(shader.programID, "material.shininess"), 32.0f);
 		nanoSuit.draw(shader);
-
-		// 2nd pass
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
-		// Shader
-		black.use();
-		// View transformations
-		glUniformMatrix4fv(glGetUniformLocation(black.programID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		// Projection transformations
-		glUniformMatrix4fv(glGetUniformLocation(black.programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		// Model transformations
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-2.0f, -1.75f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::scale(model, glm::vec3(1.1f, 1.1f, 1.1f));
-		model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(black.programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		nanoSuit.draw(black);
-		glStencilMask(0xFF);
-		glEnable(GL_DEPTH_TEST);
-
 
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
