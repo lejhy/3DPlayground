@@ -43,7 +43,7 @@
     <None Include="black.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="blending.frag">
+    <None Include="transparentBG.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

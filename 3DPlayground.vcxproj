@@ -124,7 +124,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="blending.frag" />
+    <None Include="transparentBG.frag" />
     <None Include="phong.frag" />
     <None Include="light.frag" />
     <None Include="light.vert" />

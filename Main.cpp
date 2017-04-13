@@ -94,7 +94,7 @@ int main() {
 
 	// Create a shader
 	Shader phong("phong.vert", "phong.frag");
-	Shader blending("phong.vert", "blending.frag");
+	Shader blending("phong.vert", "transparentBG.frag");
 
 	// Enable depth and stencil testing 
 	glEnable(GL_DEPTH_TEST);
